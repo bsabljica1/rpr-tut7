@@ -12,15 +12,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Tutorijal implements Serializable {
-    public static void main(String[] args) {
-        // write your code here
-    }
 
-    static ArrayList<Grad> ucitajGradove() throws FileNotFoundException {
+    static ArrayList<Grad> ucitajGradove()  {
         Scanner ulaz=null;
         ArrayList<Grad> gradovi = new ArrayList<>();
         try {
-            ulaz = new Scanner(new FileReader("ulaz.txt"));
+            ulaz = new Scanner(new FileReader("mjerenja.txt"));
         } catch (FileNotFoundException e) {
             System.out.println("Datoteka mjerenja.txt ne postoji ili se ne može otvoriti");
         }
@@ -51,46 +48,65 @@ public class Tutorijal implements Serializable {
         return gradovi;
             }
 
-    public static UN ucitajXml(ArrayList<Grad> gradovi){
+    static UN ucitajXml(ArrayList<Grad> gradovi) {
         Document xmldoc = null;
+        UN un = new UN();
+        ArrayList<Drzava> listaDrzava = new ArrayList<>();
         try {
             DocumentBuilder docReader = DocumentBuilderFactory.newInstance().newDocumentBuilder();
             xmldoc = docReader.parse(new File("drzave.xml"));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("drzave.xml nije validan XML dokument");
-            return null;
         }
-        Element korijen = xmldoc.getDocumentElement();
-        NodeList djeca = korijen.getChildNodes();
-        String brojStanovnika = new String();
-        String naziv = new String();
-        for(int i = 0; i < djeca.getLength(); i++) {
-            Node dijete = djeca.item(i);
-            if (dijete instanceof Element) {
-                Element element = (Element) dijete;
-                element.getAttribute(brojStanovnika);
-                NodeList djecaDjece = element.getChildNodes();
-                if(djecaDjece.getLength() == 1) continue;
-                for(int j = 0; j < djecaDjece.getLength(); j++) {
-                    Node dijeteDjeteta = djecaDjece.item(j);
-                    if (dijeteDjeteta instanceof Element) {
-                        element = (Element) dijeteDjeteta;
-                        element.getAttribute(naziv);
-                        NodeList djecaDjeceDjece = element.getChildNodes();
-                        if(djecaDjeceDjece.getLength() == 1) continue;
-                        for(int k = 0; k < djecaDjece.getLength(); k++){
-                            Node dijeteDjetetaDjeteta = djecaDjeceDjece.item(i);
-                            if (dijeteDjetetaDjeteta instanceof Element) {
-                                element = (Element) dijeteDjeteta;
-                                element.getAttribute(naziv);
+        try {
+            Element korijen = xmldoc.getDocumentElement();
+            NodeList drzave = korijen.getChildNodes(); //sve drzave
+            for (int i = 0; i < drzave.getLength(); i++) {
+                Node dijete = drzave.item(i); //drzava
+                if (dijete instanceof Element) {
+                    Element drzava = (Element) dijete;
+                    Drzava d = new Drzava();
+                    d.setBrojStanovnika(Integer.parseInt(drzava.getAttribute("stanovnika")));
+                    NodeList djecaDrzave = drzava.getChildNodes(); //tagovi unutar jedne drzave
+                    for (int j = 0; j < djecaDrzave.getLength(); j++) {
+                        Node dijete2 = djecaDrzave.item(j);
+                        if (dijete2 instanceof Element) {
+                            Element dijeteDrzave = (Element) dijete2;
+                            if (dijeteDrzave.getTagName().equals("naziv")) {
+                                d.setNaziv(dijeteDrzave.getTextContent());
+                            } else if (dijeteDrzave.getTagName().equals("glavnigrad")) {
+                                Grad glavniGrad = new Grad();
+                                NodeList djecaGrada = dijeteDrzave.getChildNodes();
+                                glavniGrad.setBrojStanovnika(Integer.parseInt(dijeteDrzave.getAttribute("stanovnika")));
+                                for (int k = 0; k < djecaGrada.getLength(); k++) {
+                                    Node dijete3 = djecaGrada.item(k);
+                                    if (dijete3 instanceof Element) {
+                                        Element dijeteGrada = (Element) dijete3;
+                                        if (dijeteGrada.getTagName().equals("naziv")) {
+                                            glavniGrad.setNaziv(dijeteGrada.getTextContent().trim());
+                                        }
+                                    }
+                                }
+                                for (Grad g : gradovi) {
+                                    if (g.getNaziv().equals(glavniGrad.getNaziv())) {
+                                        glavniGrad.setVelicina(g.getVelicina());
+                                        glavniGrad.setTemperature(g.getTemperature());
+                                    }
+                                }
+                                d.setGlavniGrad(glavniGrad);
+                            } else if (dijeteDrzave.getTagName().equals("povrsina")) {
+                                d.setPovrsina(Double.parseDouble(dijeteDrzave.getTextContent()));
+                                d.setJedinicaPovrsine(dijeteDrzave.getAttribute("jedinica"));
                             }
                         }
                     }
+                    listaDrzava.add(d);
                 }
             }
+            un.setLista(listaDrzava);
+        } catch (Exception e) {
+            System.out.println("Greška: " + e);
         }
-        UN un = new UN();
         return un;
     }
 
@@ -102,6 +118,17 @@ public class Tutorijal implements Serializable {
         } catch(Exception e) {
             System.out.println("Greška: " + e);
         }
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Grad> g = ucitajGradove();
+        UN n = ucitajXml(g);
+        ArrayList<Drzava> drzave = n.getLista();
+        for(Drzava d : drzave){
+            System.out.println(d.getNaziv() + " " + d.getBrojStanovnika()+" " + d.getPovrsina()+" " + d. getJedinicaPovrsine() +
+                    " "+ d.getGlavniGrad().getNaziv()+" " + d.getGlavniGrad().getBrojStanovnika() + " " + d.getGlavniGrad().getVelicina());
+        }
+        zapisiXml(n);
     }
 
         }
