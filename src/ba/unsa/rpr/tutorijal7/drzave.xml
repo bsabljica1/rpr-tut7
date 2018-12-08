@@ -1,0 +1,16 @@
+<drzave>
+    <drzava stanovnika="3500000">
+        <naziv>Bosna i Hercegovina</naziv>
+        <glavnigrad stanovnika="400000">
+            <naziv>Sarajevo</naziv>
+        </glavnigrad>
+        <povrsina jedinica="km2">51129</povrsina>
+    </drzava>
+    <drzava stanovnika="3000000">
+        <naziv>Hrvatska</naziv>
+        <glavnigrad stanovnika="400000">
+            <naziv>Zagreb</naziv>
+        </glavnigrad>
+        <povrsina jedinica="km2">50000</povrsina>
+    </drzava>
+</drzave>
