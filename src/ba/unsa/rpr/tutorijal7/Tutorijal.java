@@ -31,8 +31,8 @@ public class Tutorijal implements Serializable {
                 grad.setNaziv(podaci[0]);
                 int i = 0;
                 double[] temperature = new double[1000];
-                for (i = 1; i < podaci.length; i++) {
-                    if (i <= 1000) temperature[i - 1] = Double.parseDouble(podaci[i]);
+                for (i = 0; i < podaci.length; i++) {
+                    if (i <= 1000) temperature[i] = Double.parseDouble(podaci[i+1]);
                     else break;
                 }
                 grad.setTemperature(temperature);
