@@ -121,14 +121,6 @@ public class Tutorijal implements Serializable {
     }
 
     public static void main(String[] args) {
-        ArrayList<Grad> g = ucitajGradove();
-        UN n = ucitajXml(g);
-        ArrayList<Drzava> drzave = n.getLista();
-        for(Drzava d : drzave){
-            System.out.println(d.getNaziv() + " " + d.getBrojStanovnika()+" " + d.getPovrsina()+" " + d. getJedinicaPovrsine() +
-                    " "+ d.getGlavniGrad().getNaziv()+" " + d.getGlavniGrad().getBrojStanovnika() + " " + d.getGlavniGrad().getVelicina());
-        }
-        zapisiXml(n);
     }
 
         }
