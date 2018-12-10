@@ -112,7 +112,7 @@ public class Tutorijal implements Serializable {
 
     public static void zapisiXml(UN un){
         try {
-            XMLEncoder izlaz = new XMLEncoder(new FileOutputStream("fakultet.xml"));
+            XMLEncoder izlaz = new XMLEncoder(new FileOutputStream("drzave.xml"));
             izlaz.writeObject(un);
             izlaz.close();
         } catch(Exception e) {
